@@ -32,6 +32,7 @@ export class ChunkUpload {
 
     for (let i = 0; i < numberOfChunks; i++) {
       const buff = await this.getChunk(file, i, chunkSize);
+      const response = await fetch('http://')
     }
   }
 }
