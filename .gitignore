@@ -1,3 +1,5 @@
+.env
+
 encoding/node_modules
 encoding/.env
 encoding/dist
