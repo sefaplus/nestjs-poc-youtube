@@ -6,9 +6,9 @@ const withMargin: SxProps = { margin: "1em" };
 function App() {
   const [file, setFile]: [File | undefined, Function] =  useState(undefined)
 
-  function handleUpload() {
+  async function handleUpload() {
     if(!file) return;
-    ChunkUpload.sendChunks(file, 8192)
+    console.log(await ChunkUpload.sendChunks(file, 8192))
   }
 
   function handleInputChange(event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) {

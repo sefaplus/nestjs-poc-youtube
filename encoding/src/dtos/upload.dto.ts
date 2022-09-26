@@ -1,3 +1,3 @@
 export class uploadDto {
-  chunk: Buffer;
+  extension: string;
 }
