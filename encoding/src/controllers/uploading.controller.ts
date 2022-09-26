@@ -7,7 +7,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { uploadDto } from 'src/dtos/upload.dto';
+import { initialDto, uploadDto } from 'src/dtos/upload.dto';
 import { UploadingService } from 'src/services/upload.service';
 
 @Controller()
@@ -19,10 +19,10 @@ export class UploadingController {
   intiialUpload(
     @Param('id') id: string,
     @UploadedFile() chunk,
-    @Body() body: uploadDto,
+    @Body() initialDto: initialDto,
   ) {
-    console.log(id, chunk, body);
-    return { message: 'ok' };
+    console.log(id, chunk, initialDto);
+    return this.uploadingService.initial(id, chunk, initialDto);
   }
 
   @UseInterceptors(FileInterceptor('chunk'))
@@ -33,6 +33,6 @@ export class UploadingController {
     @Body() body: uploadDto,
   ) {
     console.log(id, chunk, body);
-    return this.uploadingService.upload(id, chunk, body.extension);
+    return this.uploadingService.upload(id, chunk);
   }
 }

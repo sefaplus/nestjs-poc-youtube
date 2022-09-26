@@ -1,10 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { typeOrmModuleOptions } from './config/orm.config';
-import { UploadingController } from './controllers/uploading.controller';
-import { UploadingService } from './services/upload.service';
+import { UploadingModule } from './modules/uploading.module';
 
 @Module({
   imports: [
@@ -13,8 +10,9 @@ import { UploadingService } from './services/upload.service';
         ...typeOrmModuleOptions,
       }),
     }),
+    UploadingModule,
   ],
-  controllers: [AppController, UploadingController],
-  providers: [AppService, UploadingService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
