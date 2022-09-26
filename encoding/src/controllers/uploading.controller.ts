@@ -21,7 +21,6 @@ export class UploadingController {
     @UploadedFile() chunk,
     @Body() initialDto: initialDto,
   ) {
-    console.log(id, chunk, initialDto);
     return this.uploadingService.initial(id, chunk, initialDto);
   }
 
@@ -33,6 +32,6 @@ export class UploadingController {
     @Body() body: uploadDto,
   ) {
     console.log(id, chunk, body);
-    return this.uploadingService.upload(id, chunk);
+    return this.uploadingService.upload(id, chunk, body.currentChunk);
   }
 }

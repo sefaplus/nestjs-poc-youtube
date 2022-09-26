@@ -1,9 +1,8 @@
 export class initialDto {
-  chunk: string;
-  filesize: string;
-  maxchunks: string;
+  filesize: number;
+  maxchunks: number;
   extension: string;
 }
 export class uploadDto {
-  currentIndex: string;
+  currentChunk: string;
 }

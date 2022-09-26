@@ -1,19 +1,23 @@
-import { Box, Button, Input, Typography } from "@mui/material";
+import { Box, Button, Input, LinearProgress, Typography } from "@mui/material";
 import { SxProps } from "@mui/system";
 import { ChangeEvent, useState } from "react";
 import { ChunkUpload } from "./libs/chunkUpload/chunkUpload.lib";
 const withMargin: SxProps = { margin: "1em" };
 function App() {
-  const [file, setFile]: [File | undefined, Function] =  useState(undefined)
-
+  const [file, setFile]: [File | undefined, Function] = useState(undefined);
+  const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   async function handleUpload() {
-    if(!file) return;
-    console.log(await ChunkUpload.sendChunks(file, 8192))
+    if (!file) return;
+    if (await ChunkUpload.sendChunks(file, 8192, setIsUploading, setProgress))
+      setIsUploading(false);
   }
 
-  function handleInputChange(event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) {
-    const input = (event.target as HTMLInputElement);
-    if(!input.files) return;
+  function handleInputChange(
+    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files) return;
     const file = input.files[0];
     setFile(file);
   }
@@ -35,10 +39,26 @@ function App() {
         }}
       >
         <Typography sx={{ ...withMargin }}>Please upload file:</Typography>
-        <Input sx={{ ...withMargin }} type="file" onChange={handleInputChange}></Input>
-        <Button sx={{ ...withMargin }} variant="contained" onClick={handleUpload}>
-          Upload
-        </Button>
+        <Input
+          sx={{ ...withMargin }}
+          type="file"
+          onChange={handleInputChange}
+        ></Input>
+        {isUploading ? (
+          <LinearProgress
+            sx={{ width: "250px" }}
+            variant="determinate"
+            value={progress}
+          />
+        ) : (
+          <Button
+            sx={{ ...withMargin }}
+            variant="contained"
+            onClick={handleUpload}
+          >
+            Upload
+          </Button>
+        )}
       </Box>
     </>
   );
