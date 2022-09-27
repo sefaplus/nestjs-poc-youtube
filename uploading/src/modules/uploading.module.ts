@@ -35,6 +35,21 @@ import { UploadingService } from 'src/services/upload.service';
         });
       },
     },
+    {
+      provide: 'ENCODED_QUEUE',
+      useFactory: () => {
+        return ClientProxyFactory.create({
+          transport: Transport.RMQ,
+          options: {
+            urls: [`amqp://guest:guest@localhost:5672`],
+            queue: 'encoded',
+            queueOptions: {
+              durable: true,
+            },
+          },
+        });
+      },
+    },
   ],
 })
 export class UploadingModule {}

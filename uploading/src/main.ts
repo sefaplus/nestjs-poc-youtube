@@ -15,7 +15,7 @@ async function bootstrap() {
     options: {
       urls: ['amqp://guest:guest@localhost:5672'],
       noAck: false,
-      queue: 'uploads',
+      queue: 'encoded',
       queueOptions: {
         durable: true,
       },

@@ -40,7 +40,7 @@ export class UploadingController {
     console.log(id, chunk, body);
     return this.uploadingService.upload(id, chunk, body.currentChunk);
   }
-  @MessagePattern('to-encode')
+  @MessagePattern('encoded')
   encode(@Ctx() context: RmqContext, @Payload() data) {
     return this.uploadingService.encode(context, data);
   }
