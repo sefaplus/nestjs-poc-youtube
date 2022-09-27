@@ -1,7 +1,7 @@
 .env
 
-encoding/node_modules
-encoding/.env
-encoding/dist
+uploading/node_modules
+uploading/.env
+uploading/dist
 
 frontend/node_modules
