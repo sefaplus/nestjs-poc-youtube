@@ -11,31 +11,31 @@ services:
     ports:
       - 5432:5432
 
-  uploading-service:
-    build:
-      context: ./uploading/.
-    container_name: uploading_service
-    depends_on:
-      - minio-service
-      - db
-    working_dir: /app
-    restart: unless-stopped
-    command: yarn start
-    ports:
-      - 3000:3000
+  # uploading-service:
+  #   build:
+  #     context: ./uploading/.
+  #   container_name: uploading_service
+  #   depends_on:
+  #     - minio-service
+  #     - db
+  #   working_dir: /app
+  #   restart: unless-stopped
+  #   command: yarn start
+  #   ports:
+  #     - 3000:3000
 
-  encoding-service:
-    build:
-      context: ./encoding/.
-    container_name: encoding_service
-    depends_on:
-      - minio-service
-      - db
-    working_dir: /app
-    restart: unless-stopped
-    command: yarn start
-    ports:
-      - 3001:3001
+  # encoding-service:
+  #   build:
+  #     context: ./encoding/.
+  #   container_name: encoding_service
+  #   depends_on:
+  #     - minio-service
+  #     - db
+  #   working_dir: /app
+  #   restart: unless-stopped
+  #   command: yarn start
+  #   ports:
+  #     - 3001:3001
 
   minio-service:
     image: minio/minio
