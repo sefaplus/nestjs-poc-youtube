@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import { ClientProxy, RmqContext } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fsPromises from 'fs/promises';
 import { MinioService } from 'nestjs-minio-client';
@@ -14,7 +20,10 @@ export class UploadingService {
     private readonly minIO: MinioService,
     @InjectRepository(UploadRequest)
     private readonly repositoryUpload: Repository<UploadRequest>,
+    @Inject('UPLOAD_QUEUE')
+    private readonly Queue__uploads: ClientProxy,
   ) {}
+
   async initial(id: string, chunk: any, initialDto: initialDto) {
     try {
       const { extension, filesize, maxchunks } = initialDto;
@@ -53,7 +62,7 @@ export class UploadingService {
       });
 
       if (found.max_chunks + 1 === nextChunk) {
-        await this.repositoryUpload.save({
+        const saved = await this.repositoryUpload.save({
           ...found,
           upload_status: UploadStatus.COMPLETED,
         });
@@ -64,6 +73,9 @@ export class UploadingService {
         await this.minIO.client
           .fPutObject('youtube', name, `${__dirname}/../uploads/${name}`)
           .then(() => Logger.log(`${name} is uploaded to minIO`));
+        // emit that we want this video processed. For now we dump the whole entity
+        // May change in the future..
+        this.Queue__uploads.emit('to-encode', { ...saved });
 
         return { finished: true };
       }
@@ -73,6 +85,13 @@ export class UploadingService {
       Logger.error(err);
       throw err;
     }
+  }
+  // For testing purposes
+  async encode(ctx: RmqContext, data: any) {
+    const channel = ctx.getChannelRef();
+    const msg = ctx.getMessage();
+    console.log(data);
+    channel.ack(msg);
   }
 
   async appendFile(id: string, extension: string, data: any) {

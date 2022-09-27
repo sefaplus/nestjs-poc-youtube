@@ -6,6 +6,12 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+import {
+  Ctx,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { initialDto, uploadDto } from 'src/dtos/upload.dto';
 import { UploadingService } from 'src/services/upload.service';
@@ -18,10 +24,10 @@ export class UploadingController {
   @Post('initial/:id')
   intiialUpload(
     @Param('id') id: string,
-    @UploadedFile() chunk,
-    @Body() initialDto: initialDto,
+    @UploadedFile() chunk: any,
+    @Body() dto: initialDto,
   ) {
-    return this.uploadingService.initial(id, chunk, initialDto);
+    return this.uploadingService.initial(id, chunk, dto);
   }
 
   @UseInterceptors(FileInterceptor('chunk'))
@@ -33,5 +39,9 @@ export class UploadingController {
   ) {
     console.log(id, chunk, body);
     return this.uploadingService.upload(id, chunk, body.currentChunk);
+  }
+  @MessagePattern('to-encode')
+  encode(@Ctx() context: RmqContext, @Payload() data) {
+    return this.uploadingService.encode(context, data);
   }
 }
