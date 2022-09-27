@@ -1,26 +1,30 @@
 import { Module } from '@nestjs/common';
-import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServerConfig } from './config/config';
+import { typeOrmModuleOptions } from './config/orm.config';
 import { AppController } from './controllers/app.controller';
+import { ProcessedVideo } from './entitites/processed-videos.entity';
+import { createRMQQueueProvider } from './helpers/helpers';
+import { AppService } from './services/app.service';
 
 @Module({
-  imports: [],
+  imports: [
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        ...typeOrmModuleOptions,
+      }),
+    }),
+    TypeOrmModule.forFeature([ProcessedVideo]),
+  ],
   controllers: [AppController],
   providers: [
-    {
-      provide: 'ENCODED_QUEUE',
-      useFactory: () => {
-        return ClientProxyFactory.create({
-          transport: Transport.RMQ,
-          options: {
-            urls: [`amqp://guest:guest@localhost:5672`],
-            queue: 'encoded',
-            queueOptions: {
-              durable: true,
-            },
-          },
-        });
-      },
-    },
+    AppService,
+    // Take note we have a different queue for processed videos.
+    // This is just to reduce size of the main upload queue..
+    createRMQQueueProvider(
+      'ENCODED_QUEUE',
+      ServerConfig.RMQ.encoded_queue_name,
+    ),
   ],
 })
 export class AppModule {}

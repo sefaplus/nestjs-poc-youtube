@@ -11,11 +11,11 @@ import {
 export class AppController {
   constructor(
     @Inject('ENCODED_QUEUE')
-    private readonly Queue__Encoded: ClientProxy,
+    private readonly Queue__encoded: ClientProxy,
   ) {}
   @MessagePattern('to-encode')
   encodeHandler(@Ctx() context: RmqContext, @Payload() data) {
     console.log('IM GONNA ENCODE!', data);
-    this.Queue__Encoded.emit('encoded', { ...data });
+    this.Queue__encoded.emit('encoded', { ...data });
   }
 }

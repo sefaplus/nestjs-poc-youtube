@@ -3,17 +3,15 @@ import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
 import * as fs from 'fs';
 import { AppModule } from './app.module';
+import { ServerConfig, serverOptions } from './config/config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    cors: true,
-    bodyParser: true,
-  });
+  const app = await NestFactory.create(AppModule, serverOptions);
   // This only setups up connection to recieve the events for MessagePatterns
   app.connectMicroservice({
     transport: Transport.RMQ,
     options: {
-      urls: ['amqp://guest:guest@localhost:5672'],
+      urls: [ServerConfig.RMQ.rmq_url],
       noAck: false,
       queue: 'encoded',
       queueOptions: {
@@ -27,8 +25,8 @@ async function bootstrap() {
 
   app.startAllMicroservices();
 
-  await app.listen(3000, () =>
-    Logger.log('Uploading service started at port 3000'),
+  await app.listen(ServerConfig.port, () =>
+    Logger.log(`Uploading service started at port ${ServerConfig.port}`),
   );
 }
 bootstrap();

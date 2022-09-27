@@ -3,6 +3,7 @@ export class initialDto {
   maxchunks: number;
   extension: string;
 }
+
 export class uploadDto {
   currentChunk: string;
 }

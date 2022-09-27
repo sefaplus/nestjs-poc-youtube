@@ -1,20 +1,16 @@
 import { UploadStatus } from 'src/consts/upload-status.enum';
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  Index,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'upload_requests' })
 export class UploadRequest extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Index()
   @Column({ type: 'text' })
   request_id: string;
+
+  @Column({ type: 'int' })
+  chunk_size: number;
 
   @Column({ type: 'int' })
   max_chunks: number;
@@ -29,5 +25,5 @@ export class UploadRequest extends BaseEntity {
   filesize: number;
 
   @Column({ enum: UploadStatus, default: UploadStatus.PENDING })
-  upload_status: UploadStatus;
+  status: UploadStatus;
 }

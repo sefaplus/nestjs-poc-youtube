@@ -1,6 +1,8 @@
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
+import { ServerConfig } from './config/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -12,9 +14,9 @@ async function bootstrap() {
   app.connectMicroservice({
     transport: Transport.RMQ,
     options: {
-      urls: ['amqp://guest:guest@localhost:5672'],
+      urls: [ServerConfig.RMQ.rmq_url],
       noAck: false,
-      queue: 'uploads',
+      queue: ServerConfig.RMQ.uploads_queue_name,
       queueOptions: {
         durable: true,
       },
@@ -25,6 +27,8 @@ async function bootstrap() {
   });
   app.startAllMicroservices();
 
-  await app.listen(3005);
+  await app.listen(ServerConfig.port, () =>
+    Logger.log(`Encoding service started at ${ServerConfig.port}`),
+  );
 }
 bootstrap();

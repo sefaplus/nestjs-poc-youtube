@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MinioModule } from 'nestjs-minio-client';
+import { ServerConfig } from 'src/config/config';
 import { UploadingController } from 'src/controllers/uploading.controller';
 import { UploadRequest } from 'src/entities/upload.entity';
+import { createRMQQueueProvider } from 'src/helpers/helpers';
 import { UploadingService } from 'src/services/upload.service';
 
 @Module({
@@ -20,36 +21,7 @@ import { UploadingService } from 'src/services/upload.service';
   controllers: [UploadingController],
   providers: [
     UploadingService,
-    {
-      provide: 'UPLOAD_QUEUE',
-      useFactory: () => {
-        return ClientProxyFactory.create({
-          transport: Transport.RMQ,
-          options: {
-            urls: [`amqp://guest:guest@localhost:5672`],
-            queue: 'uploads',
-            queueOptions: {
-              durable: true,
-            },
-          },
-        });
-      },
-    },
-    {
-      provide: 'ENCODED_QUEUE',
-      useFactory: () => {
-        return ClientProxyFactory.create({
-          transport: Transport.RMQ,
-          options: {
-            urls: [`amqp://guest:guest@localhost:5672`],
-            queue: 'encoded',
-            queueOptions: {
-              durable: true,
-            },
-          },
-        });
-      },
-    },
+    createRMQQueueProvider('UPLOAD_QUEUE', ServerConfig.RMQ.uploads_queue_name),
   ],
 })
 export class UploadingModule {}
