@@ -1,7 +1,15 @@
+# general
 .env
 
+# uploading
 uploading/node_modules
 uploading/.env
 uploading/dist
 
+# front
 frontend/node_modules
+
+# encoding
+encoding/node_modules
+encoding/.env
+encoding/dist
