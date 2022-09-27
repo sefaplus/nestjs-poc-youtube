@@ -1,15 +1,17 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as fsPromises from 'fs/promises';
+import { MinioService } from 'nestjs-minio-client';
+import { UploadStatus } from 'src/consts/upload-status.enum';
 import { initialDto } from 'src/dtos/upload.dto';
 import { UploadRequest } from 'src/entities/upload.entity';
 import { FileIdAnswer } from 'src/helpers/helpers';
 import { Repository } from 'typeorm';
-import * as fsPromises from 'fs/promises';
-import { UploadStatus } from 'src/consts/upload-status.enum';
 
 @Injectable()
 export class UploadingService {
   constructor(
+    private readonly minIO: MinioService,
     @InjectRepository(UploadRequest)
     private readonly repositoryUpload: Repository<UploadRequest>,
   ) {}
@@ -42,8 +44,8 @@ export class UploadingService {
       const found = await this.repositoryUpload.findOne({ where: { id } });
 
       if (!found) throw new BadRequestException('Upload request not found.');
-
       const nextChunk = parseInt(currentChunk) + 1;
+      const name = `${found.id}.${found.extension}`;
 
       await this.repositoryUpload.save({
         ...found,
@@ -55,6 +57,14 @@ export class UploadingService {
           ...found,
           upload_status: UploadStatus.COMPLETED,
         });
+
+        // I would love to use chunk upload on minio directly but i have no clue how
+        // Documentation is terrible and theres not native way to do this as far
+        // as I am aware...
+        await this.minIO.client
+          .fPutObject('youtube', name, `${__dirname}/../uploads/${name}`)
+          .then(() => Logger.log(`${name} is uploaded to minIO`));
+
         return { finished: true };
       }
       await this.appendFile(found.id, found.extension, chunk.buffer);

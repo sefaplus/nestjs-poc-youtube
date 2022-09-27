@@ -12,7 +12,7 @@ export const typeOrmModuleOptions: TypeOrmModuleOptions = {
   database: process.env.DB_DATABASE,
   host: process.env.DB_HOST,
   entities: [__dirname + '/../entities/*.entity.{ts,js}'],
-  synchronize: true,
+  synchronize: true, // FIXME LATER
   autoLoadEntities: true,
   migrationsRun: true,
   logging: true,
