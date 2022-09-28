@@ -1,21 +1,18 @@
-import { Controller, Inject } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import {
-  ClientProxy,
   Ctx,
   MessagePattern,
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
+import { VideoData } from 'src/consts/video.data.type';
+import { AppService } from 'src/services/app.service';
 
 @Controller()
 export class AppController {
-  constructor(
-    @Inject('ENCODED_QUEUE')
-    private readonly Queue__encoded: ClientProxy,
-  ) {}
+  constructor(private readonly appService: AppService) {}
   @MessagePattern('to-encode')
-  encodeHandler(@Ctx() context: RmqContext, @Payload() data) {
-    console.log('IM GONNA ENCODE!', data);
-    this.Queue__encoded.emit('encoded', { ...data });
+  encodeHandler(@Ctx() context: RmqContext, @Payload() data: VideoData): void {
+    this.appService.encodeVideo(data, context);
   }
 }

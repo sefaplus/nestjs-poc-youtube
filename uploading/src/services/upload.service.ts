@@ -7,7 +7,9 @@ import {
 import { ClientProxy, RmqContext } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fsPromises from 'fs/promises';
+import { CopyDestinationOptions } from 'minio';
 import { MinioService } from 'nestjs-minio-client';
+import { ServerConfig } from 'src/config/config';
 import { UploadStatus } from 'src/consts/upload-status.enum';
 import { initialDto } from 'src/dtos/upload.dto';
 import { UploadRequest } from 'src/entities/upload.entity';
@@ -79,12 +81,15 @@ export class UploadingService {
         // Documentation is terrible and theres not native way to do this as far
         // as I am aware...
         await this.minIO.client
-          .fPutObject('youtube', name, `${__dirname}/../uploads/${name}`)
+          .fPutObject(
+            ServerConfig.MinIO.encoding_bucket,
+            name,
+            `${__dirname}/../uploads/${name}`,
+          )
           .then(async () => {
             await fsPromises.unlink(`${__dirname}/../uploads/${name}`);
             Logger.log(`${name} is successfully uploaded to minIO!`);
           });
-
         // emit that we want this video processed
         this.Queue__uploads.emit('to-encode', {
           name,

@@ -1,0 +1,6 @@
+export enum VideoConsts {
+  BITRATE_1080 = 6000,
+  BITRATE_720 = 4000,
+  BITRATE_480 = 2000,
+  BITRATE_360 = 1000,
+}

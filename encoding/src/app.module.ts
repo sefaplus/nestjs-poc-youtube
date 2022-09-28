@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MinioModule } from 'nestjs-minio-client';
 import { ServerConfig } from './config/config';
 import { typeOrmModuleOptions } from './config/orm.config';
 import { AppController } from './controllers/app.controller';
@@ -15,6 +16,13 @@ import { AppService } from './services/app.service';
       }),
     }),
     TypeOrmModule.forFeature([ProcessedVideo]),
+    MinioModule.register({
+      endPoint: '127.0.0.1',
+      port: 9099,
+      useSSL: false,
+      accessKey: process.env.MINIO_ROOT_USER,
+      secretKey: process.env.MINIO_ROOT_PASSWORD,
+    }),
   ],
   controllers: [AppController],
   providers: [
@@ -24,6 +32,10 @@ import { AppService } from './services/app.service';
     createRMQQueueProvider(
       'ENCODED_QUEUE',
       ServerConfig.RMQ.encoded_queue_name,
+    ),
+    createRMQQueueProvider(
+      'STREAMING_QUEUE',
+      ServerConfig.RMQ.streaming_queue_name,
     ),
   ],
 })

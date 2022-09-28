@@ -11,31 +11,31 @@ services:
     ports:
       - 5432:5432
 
-  uploading-service:
-    build:
-      context: ./uploading/.
-    container_name: uploading_service
-    depends_on:
-      - minio-service
-      - db
-    working_dir: /app
-    restart: unless-stopped
-    command: yarn start
-    ports:
-      - 3000:3000
+  # uploading-service:
+  #   build:
+  #     context: ./uploading/.
+  #   container_name: uploading_service
+  #   depends_on:
+  #     - minio-service
+  #     - db
+  #   working_dir: /app
+  #   restart: unless-stopped
+  #   command: yarn start
+  #   ports:
+  #     - 3000:3000
 
-  encoding-service:
-    build:
-      context: ./encoding/.
-    container_name: encoding_service
-    depends_on:
-      - minio-service
-      - db
-    working_dir: /app
-    restart: unless-stopped
-    command: yarn start
-    ports:
-      - 3005:3005
+  # encoding-service:
+  #   build:
+  #     context: ./encoding/.
+  #   container_name: encoding_service
+  #   depends_on:
+  #     - minio-service
+  #     - db
+  #   working_dir: /app
+  #   restart: unless-stopped
+  #   command: yarn start
+  #   ports:
+  #     - 3005:3005
 
   minio-service:
     image: minio/minio
@@ -58,8 +58,10 @@ services:
     entrypoint: >
       /bin/sh -c "
       until (/usr/bin/mc config host add youtubeminio http://minio-service:9099 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}) do echo '...waiting...' && sleep 1; done;
-      /usr/bin/mc mb youtubeminio/youtube;
-      /usr/bin/mc policy set download youtubeminio/youtube;
+      /usr/bin/mc mb youtubeminio/encoding;
+      /usr/bin/mc policy set download youtubeminio/encoding;
+      /usr/bin/mc mb youtubeminio/streaming;
+      /usr/bin/mc policy set download youtubeminio/streaming;
       exit 0;
       "
 

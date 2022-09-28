@@ -13,6 +13,9 @@ export class ProcessedVideo extends BaseEntity {
   filesize: number;
 
   @Column({ type: 'bool', default: false })
+  '1080p': boolean;
+
+  @Column({ type: 'bool', default: false })
   '720p': boolean;
 
   @Column({ type: 'bool', default: false })
