@@ -74,6 +74,7 @@ export class ChunkUpload {
     initialFormData.append("chunk", firstChunk);
     initialFormData.append("filesize", filesize.toString());
     initialFormData.append("maxchunks", numberOfChunks.toString());
+    initialFormData.append("chunkSize", chunkSize.toString());
     initialFormData.append("extension", extension);
 
     const initialResponse = (await fetch(`${server}/initial/${id}`, {

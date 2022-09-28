@@ -43,6 +43,7 @@ export class UploadingService {
         extension,
         max_chunks: maxchunks,
         current_chunk: 0,
+        chunk_size: initialDto.chunkSize,
       });
 
       await this.appendFile(saved.id, saved.extension, chunk.buffer);
