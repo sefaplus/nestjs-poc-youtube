@@ -13,3 +13,6 @@ frontend/node_modules
 encoding/node_modules
 encoding/.env
 encoding/dist
+
+# rabbitmq
+rabbitmq/rabbitmq.conf

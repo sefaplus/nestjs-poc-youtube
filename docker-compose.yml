@@ -54,6 +54,11 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: 'rabbitmq'
+    environment:
+      - RMQ_USER=${RMQ_USER} 
+      - RMQ_PWD=${RMQ_PWD}
+    volumes:
+      - ./rabbitmq/.:/etc/rabbitmq/conf.d/.
     ports:
       - 5672:5672
       - 15672:15672
