@@ -39,7 +39,7 @@ services:
 
   minio-service:
     image: minio/minio
-    container_name: minio
+    container_name: minio-service
     restart: always
     ports:
       - 9000:9000
@@ -50,6 +50,18 @@ services:
       MINIO_ACCESS_KEY: ${MINIO_SERVER_ACCESS_KEY}
       MINIO_SECRET_KEY: ${MINIO_SERVER_SECRET_KEY}
     command: server --address ":9099" --console-address ":9000" /data
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio-service
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc config host add youtubeminio http://minio-service:9099 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}) do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc mb youtubeminio/youtube;
+      /usr/bin/mc policy set download youtubeminio/youtube;
+      exit 0;
+      "
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
