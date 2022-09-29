@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import {
   Ctx,
   MessagePattern,
@@ -14,5 +14,10 @@ export class AppController {
   @MessagePattern('to-encode')
   encodeHandler(@Ctx() context: RmqContext, @Payload() data: VideoData): void {
     this.appService.encodeVideo(data, context);
+  }
+
+  @Get('aaa')
+  www() {
+    return this.appService.aaa();
   }
 }

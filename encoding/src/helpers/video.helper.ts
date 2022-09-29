@@ -35,6 +35,12 @@ export async function transcodeVid(
   // an older implementation of ffmpeg, and it adds command of -b={bitrate}kb
   // so we have to manually add the bitrate like so =>
   video.addCommand('-b:v', setBitrate + 'k');
+  // next ones to create fragmented videos
+  video.addCommand('-ab', '64k');
+  video.addCommand('-vb', '448k');
+  // Oleg
+  video.addCommand('-movflags', 'frag_keyframe+empty_moov');
+  video.addCommand('-codec:v', 'libx264');
   // Also it doesnt return video object so we do not put it in the chain below
 
   await video
@@ -47,7 +53,6 @@ export async function transcodeVid(
       true,
       true,
     )
-    .setVideoCodec('h264')
     .setVideoFormat('mp4')
     .save(destination);
 

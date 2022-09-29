@@ -26,6 +26,24 @@ export class AppService {
     this.Queue__encoded.connect();
     this.Queue__streaming.connect();
   }
+  async aaa() {
+    let bb;
+    // Oleg
+    const obj = await this.minIO.client.getPartialObject(
+      ServerConfig.MinIO.streaming_bucker,
+      '1080p-beadba70-0491-4541-a827-bfb5ff52e87c.mp4',
+      0,
+      1024 * 1024,
+    );
+
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        bb = obj.read();
+        resolve();
+      }, 2000);
+    });
+    return bb;
+  }
   async encodeVideo(data: VideoData, context: RmqContext) {
     const { filesize, id, name } = data;
     try {

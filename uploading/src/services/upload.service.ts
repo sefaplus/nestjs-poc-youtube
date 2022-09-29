@@ -7,7 +7,6 @@ import {
 import { ClientProxy, RmqContext } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fsPromises from 'fs/promises';
-import { CopyDestinationOptions } from 'minio';
 import { MinioService } from 'nestjs-minio-client';
 import { ServerConfig } from 'src/config/config';
 import { UploadStatus } from 'src/consts/upload-status.enum';
