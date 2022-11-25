@@ -1,0 +1,4 @@
+# This is an example conf file for your rabbitmq.conf
+# These should math with the ones you have in your .env files
+default_user = your_user
+default_pass = your_pass
